@@ -1,6 +1,7 @@
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { generateRedirectsEvaluator } from "redirects-in-workers";
 import redirectsFileContents from "../dist/__redirects";
+import { AI_CATALOG_BODY, AI_CATALOG_HEADERS } from "./ai-catalog";
 
 const redirectsEvaluator = generateRedirectsEvaluator(redirectsFileContents, {
 	maxLineLength: 10_000, // Usually 2_000
@@ -100,6 +101,12 @@ export default class extends WorkerEntrypoint<Env> {
 					"Content-Type":
 						'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"',
 				},
+			});
+		}
+
+		if (pathname === "/.well-known/ai-catalog.json") {
+			return new Response(AI_CATALOG_BODY, {
+				headers: AI_CATALOG_HEADERS,
 			});
 		}
 
